@@ -8,29 +8,38 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 public class CSVStateCensus {
-	static String FILE_PATH = "C:\\Day_29_Census_Analyzer\\src\\main\\java\\com\\bridgelabz\\State_census.csv";
-
-    public ArrayList<String> readDataFromSource() throws IOException {
+	public ArrayList<String> readDataFromSource(String path, String expectedColumnHeader, int expectedColumnCount) throws Exception {
         ArrayList<String> stateList = new ArrayList<>();
         try{
-            FileReader filereader = new FileReader(FILE_PATH);
-
+            FileReader filereader = new FileReader(path);
+            int count = 0;
             CSVReader csvReader = new CSVReader(filereader);
             String[] nextRecord;
-
             while ((nextRecord = csvReader.readNext()) != null) {
+                int columCount = 0;
                 String entry = "";
                 for (String addressBookDetails : nextRecord) {
                     entry = entry + addressBookDetails + "\t";
+                    columCount++;
+                }
+                if( count==0 && columCount != expectedColumnCount){
+                    throw new FileReadException("Error in Reading file");
+                }
+
+                if(count ==0 && !entry.equals(expectedColumnHeader)) {
+                    System.out.println(entry);
+                    System.out.println(expectedColumnHeader);
+                    throw new FileReadException("Error in Reading file");
                 }
                 stateList.add(entry);
                 System.out.println(entry);
+                count++;
             }
-        } catch (CsvValidationException e){
-           
+        } catch (Exception e){
+            throw new FileReadException("Error in Reading file");
         }
 
         return stateList;
-	    }
+    }
 	
 }
