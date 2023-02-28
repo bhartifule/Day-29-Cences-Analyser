@@ -8,34 +8,33 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 public class CSVStateCensus {
-	 public ArrayList<String> readDataFromSource1(String path) throws Exception {
+	  public ArrayList<String> readDataFromSource(String path, String expectedColumnHeader, int expectedColumnCount) throws Exception {
 	        ArrayList<String> stateList = new ArrayList<>();
 	        try{
 	            FileReader filereader = new FileReader(path);
-
+	            int count = 0;
 	            CSVReader csvReader = new CSVReader(filereader);
 	            String[] nextRecord;
-
 	            while ((nextRecord = csvReader.readNext()) != null) {
+	                int columCount = 0;
 	                String entry = "";
 	                for (String addressBookDetails : nextRecord) {
 	                    entry = entry + addressBookDetails + "\t";
+	                    columCount++;
+	                }
+	                if( count==0 && columCount != expectedColumnCount){
+	                    throw new FileReadException("Error in Reading file");
 	                }
 	                stateList.add(entry);
 	                System.out.println(entry);
+	                count++;
 	            }
-	        } catch (CsvValidationException e){
+	        } catch (Exception e){
 	            throw new FileReadException("Error in Reading file");
 	        }
 
 	        return stateList;
 	    }
-
-	public ArrayList<String> readDataFromSource(String path) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public ArrayList<String> readDataFromSource() {
 		// TODO Auto-generated method stub
 		return null;
